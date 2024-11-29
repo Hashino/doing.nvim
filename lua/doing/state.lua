@@ -1,10 +1,15 @@
 local State = {}
 
+---@class Options
+---@field ignored_buffers string[]|fun():string[] elements of the array are checked against buffer filename/filetype
+---@field message_timeout integer how many millisecons messages will stay on screen
+---@field doing_prefix string prefix to show before the task
+---@field winbar.enabled boolean if plugin should manage the winbar
+---@field store.file_name string name of the task file
+---@field store.auto_create_file boolean if true, creates task file on opening directory
 State.default_opts = {
   message_timeout = 2000,
   doing_prefix = "Doing: ",
-
-
   ignored_buffers = { "NvimTree" },
 
   winbar = {
@@ -12,8 +17,8 @@ State.default_opts = {
   },
 
   store = {
+    file_name = ".tasks",
     auto_create_file = false,
-    file_name = ".tasks"
   }
 }
 
@@ -25,7 +30,6 @@ State.options = State.default_opts
 
 ---initialize task store
 State.init = function(options)
-
   local default_state = {
     options = options,
     file = nil,

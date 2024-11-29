@@ -3,6 +3,8 @@
 A tiny task manager within nvim that helps you stay on track by keeping a stack
 of tasks and always showing which task is at the top and how many more you have.
 
+It works by storing the tasks in a plain text file
+
 this plugin was originally a fork of [nocksock/do.nvim](https://github.com/nocksock/do.nvim)
 
 ![doing](https://raw.githubusercontent.com/Hashino/doing.nvim/main/demo.gif)
@@ -36,21 +38,20 @@ return {
   config = function()
     require('doing').setup {
       message_timeout = 2000,
+      doing_prefix = 'Doing: ',
 
       -- doesn't display on buffers that match filetype/filename to entries
       -- can be either an array or a function that returns an array
       ignored_buffers = { 'NvimTree' }
 
-      winbar = { 
-        enabled = true,
-      },
-
-      doing_prefix = 'Current Task: ',
+        -- if plugin should manage the winbar
+      winbar = { enabled = true, },
 
       store = {
+        -- name of tasks file
+        file_name = '.tasks',
         -- automatically create a task file when openning directories
         auto_create_file = false, 
-        file_name = '.tasks',
       },
     }
     -- example on how to change the winbar highlight
