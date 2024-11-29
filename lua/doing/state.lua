@@ -4,9 +4,11 @@ State.default_opts = {
   message_timeout = 2000,
   doing_prefix = "Doing: ",
 
+
+  ignored_buffers = { "NvimTree" },
+
   winbar = {
     enabled = true,
-    ignored_buffers = { "NvimTree" },
   },
 
   store = {

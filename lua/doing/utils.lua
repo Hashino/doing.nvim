@@ -17,7 +17,7 @@ function Utils.should_display_task()
     return false
   end
 
-  local ignore = state.options.winbar.ignored_buffers
+  local ignore = state.options.ignored_buffers
 
   if type(ignore) == "function" then
     ignore = ignore()

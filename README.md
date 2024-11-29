@@ -1,22 +1,11 @@
 # Doing.nvim
 
-A tiny task manager within nvim that helps you stay on track.
+A tiny task manager within nvim that helps you stay on track by keeping a stack
+of tasks and always showing which task is at the top and how many more you have.
 
 this plugin was originally a fork of [nocksock/do.nvim](https://github.com/nocksock/do.nvim)
 
 ![doing](https://raw.githubusercontent.com/Hashino/doing.nvim/main/demo.gif)
-
-## Rationale
-
-While coding, we often need to do several things that depend on another.
-And it's quite easy to loose track of what we initially set out to do in the first place, which is also know as [Yak Shaving](https://en.wiktionary.org/wiki/yak_shaving).
-_Or_ we just have a list of tasks that we want to work off step by step.
-
-This plugin provides a few simple commands to help you stay on track.
-
-It manages a list of things and always shows you the first item.
-It provides you with some commands to add things to it, without leaving context.
-And it uses a simple, intuitive floating buffer to manage that list.
 
 ## Usage
 
@@ -46,18 +35,21 @@ return {
   'hashino/doing.nvim',
   config = function()
     require('doing').setup {
-      -- default options
       message_timeout = 2000,
+
+      -- doesn't display on buffers that match filetype/filename to entries
+      -- can be either an array or a function that returns an array
+      ignored_buffers = { 'NvimTree' }
+
       winbar = { 
         enabled = true,
-        -- ignores buffers that match filetype
-        ignored_buffers = { 'NvimTree' }
       },
 
       doing_prefix = 'Current Task: ',
+
       store = {
-        -- automatically create a .tasks when calling :Do
-        auto_create_file = true, 
+        -- automatically create a task file when openning directories
+        auto_create_file = false, 
         file_name = '.tasks',
       },
     }
