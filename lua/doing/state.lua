@@ -33,7 +33,7 @@ local function add_to_gitignore()
   local is_ignored = false
   if gitignore then
     while not is_ignored do
-      local line = gitignore:read "*line"
+      local line = gitignore:read("*line")
       if not line then
         break
       end
@@ -51,11 +51,6 @@ local function add_to_gitignore()
       gitignore:write(filename .. "\n")
       gitignore:close()
     end
-  end
-
-  if gitignore then
-    gitignore:write(config.options.store.file_name .. "\n")
-    gitignore:close()
   end
 end
 
