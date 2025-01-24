@@ -1,5 +1,5 @@
-local config = require("doing.config")
-local utils = require("doing.utils")
+local config = require "doing.config"
+local utils = require "doing.utils"
 
 local State = {
   message = nil,
@@ -10,9 +10,7 @@ local State = {
 local tasks_file = ""
 
 local function load_tasks()
-  tasks_file = vim.fn.getcwd()
-     .. utils.os_path_separator()
-     .. config.options.store.file_name
+  tasks_file = vim.fn.getcwd() .. utils.os_path_separator() .. config.options.store.file_name
 
   local ok, res = pcall(vim.fn.readfile, tasks_file)
   State.tasks = ok and res or {}
@@ -21,12 +19,45 @@ end
 load_tasks()
 
 -- reloads tasks when directory changes and on startup
-vim.api.nvim_create_autocmd({ "DirChanged", "VimEnter", }, {
+vim.api.nvim_create_autocmd({ "DirChanged", "VimEnter" }, {
   callback = function()
     load_tasks()
     State.task_modified()
   end,
 })
+
+local function add_to_gitignore()
+  --check if it is already ignored
+  local gitignore = io.open(".gitignore", "r")
+  local filename = config.options.store.file_name
+  local is_ignored = false
+  if gitignore then
+    while not is_ignored do
+      local line = gitignore:read "*line"
+      if not line then
+        break
+      end
+      if line == filename then
+        is_ignored = true
+        gitignore:close()
+      end
+    end
+  end
+
+  --if it is not ignored, ignore it
+  if not is_ignored then
+    gitignore = io.open(".gitignore", "a")
+    if gitignore then
+      gitignore:write(filename .. "\n")
+      gitignore:close()
+    end
+  end
+
+  if gitignore then
+    gitignore:write(config.options.store.file_name .. "\n")
+    gitignore:close()
+  end
+end
 
 ---syncs file tasks with loaded tasks
 local function sync()
@@ -36,8 +67,7 @@ local function sync()
       local ok, err, err_name = (vim.uv or vim.loop).fs_unlink(tasks_file)
 
       if not ok then
-        utils.notify(tostring(err_name) .. ":" .. tostring(err),
-          vim.log.levels.ERROR)
+        utils.notify(tostring(err_name) .. ":" .. tostring(err), vim.log.levels.ERROR)
       end
     end)()
   end
@@ -47,10 +77,13 @@ local function sync()
   if #State.tasks > 0 and not ok then
     utils.notify("error writing to tasks file:\n" .. err, vim.log.levels.ERROR)
   end
+  if ok then
+    add_to_gitignore()
+  end
 end
 
 if not config.options.store.sync_tasks then
-  vim.api.nvim_create_autocmd({ "VimLeave", "DirChangedPre", }, { callback = sync, })
+  vim.api.nvim_create_autocmd({ "VimLeave", "DirChangedPre" }, { callback = sync })
 end
 
 ---@param force? boolean return status even if the plugin is toggled off
@@ -95,7 +128,7 @@ end
 
 ---gets called when a task is added, edited, or removed
 function State.task_modified()
-  vim.api.nvim_exec_autocmds("User", { pattern = "TaskModified", })
+  vim.api.nvim_exec_autocmds("User", { pattern = "TaskModified" })
   return config.options.store.sync_tasks and sync()
 end
 
