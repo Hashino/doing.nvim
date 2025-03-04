@@ -1,6 +1,7 @@
 local config = require("doing.config")
 local state  = require("doing.state")
 local edit   = require("doing.edit")
+local utils  = require("doing.utils")
 
 local Doing  = {}
 
@@ -86,6 +87,20 @@ end
 ---@return integer number of tasks left
 function Doing.tasks_left()
   return #state.tasks or 0
+end
+
+function Doing.random()
+  if #state.tasks > 0 then
+    local task = state.tasks[math.random(#state.tasks)]
+
+    if not config.options.show_messages then
+      utils.notify("Do: " .. task)
+    else
+      state.show_message("Do: " .. task, 10000)
+    end
+  else
+    state.show_message("No tasks to do")
+  end
 end
 
 return Doing
