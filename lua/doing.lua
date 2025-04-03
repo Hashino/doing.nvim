@@ -1,29 +1,31 @@
 local config = require("doing.config")
-local state  = require("doing.state")
-local edit   = require("doing.edit")
-local utils  = require("doing.utils")
+local state = require("doing.state")
+local edit = require("doing.edit")
+local utils = require("doing.utils")
 
-local Doing  = {}
+local Doing = {}
+local user_opts = {}
 
 --- setup doing.nvim
 ---@param opts? DoingOptions
 function Doing.setup(opts)
   config.options = vim.tbl_deep_extend("force", config.default_opts, opts or {})
+  user_opts = vim.deepcopy(config.options)
 
   -- doesn't touch the winbar if disabled so other plugins can manage
   -- it without interference
   if config.options.winbar.enabled then
     local function update_winbar()
       vim.defer_fn(function()
-        vim.api.nvim_set_option_value("winbar", state.status(), { scope = "local", })
+        vim.api.nvim_set_option_value("winbar", state.status(), { scope = "local" })
       end, 0)
     end
 
-    vim.api.nvim_create_autocmd({ "BufEnter", }, {
+    vim.api.nvim_create_autocmd({ "BufEnter" }, {
       callback = update_winbar,
     })
 
-    vim.api.nvim_create_autocmd({ "User", }, {
+    vim.api.nvim_create_autocmd({ "User" }, {
       pattern = "TaskModified",
       callback = update_winbar,
     })
@@ -43,7 +45,7 @@ function Doing.add(task, to_front)
     state.add(task, to_front)
     state.task_modified()
   else
-    vim.ui.input({ prompt = "Enter the new task: ", }, function(input)
+    vim.ui.input({ prompt = "Enter the new task: " }, function(input)
       if input then
         state.add(input, to_front)
         state.task_modified()
@@ -54,7 +56,8 @@ end
 
 ---edit the tasks in a floating window
 function Doing.edit()
-  edit.open_edit()
+  --- pass the new opts to the edit window
+  edit.open_edit(user_opts)
 end
 
 ---finish the current task

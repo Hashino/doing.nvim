@@ -96,6 +96,9 @@ lazy.nvim:
       -- if should show messages on the status string
       show_messages = true,
 
+      -- if ESC should close the window
+      close_on_esc = false,
+
       -- window configs of the floating tasks editor
       -- see :h nvim_open_win() for available options
       edit_win_config = {
