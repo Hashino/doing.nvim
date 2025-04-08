@@ -20,7 +20,7 @@ a more featureful task manager, check out [todotxt.nvim](https://github.com/arna
 this plugin was originally a fork of [nocksock/do.nvim](https://github.com/nocksock/do.nvim)
 
 ![doing](https://raw.githubusercontent.com/Hashino/doing.nvim/main/demo.gif)
-*the gif was recorded using a [custom heirline component](https://github.com/Hashino/hash.nvim/blob/16d5a2af48b793808ee6d7daac0b8d6698faaa14/lua/hash/plugins/interface/status-bar.lua#L176-L221)*
+_the gif was recorded using a [custom heirline component](https://github.com/Hashino/hash.nvim/blob/16d5a2af48b793808ee6d7daac0b8d6698faaa14/lua/hash/plugins/interface/status-bar.lua#L176-L221)_
 
 ## Commands
 
@@ -29,21 +29,21 @@ this plugin was originally a fork of [nocksock/do.nvim](https://github.com/nocks
 - `:Do` will prompt user input for `{task}`
 - `:Do {task}`
 - `:Do "{task}"`
-- `:Do add {task}` 
+- `:Do add {task}`
 
-*will all add `{task}` to the end of the tasklist*
+_will all add `{task}` to the end of the tasklist_
 
 - `:Do!` will prompt user input for `{task}`
 - `:Do! {task}`
 - `:Do! "{task}"`
-- `:Do! add {task}` 
+- `:Do! add {task}`
 
-*will all add `{task}` to the start of the tasklist*
+_will all add `{task}` to the start of the tasklist_
 
 - `:Done`
 - `:Do done`
 
-*will both remove the current task from the list* 
+_will both remove the current task from the list_
 
 ### Other Commands
 
@@ -55,6 +55,7 @@ this plugin was originally a fork of [nocksock/do.nvim](https://github.com/nocks
 ## Installation
 
 lazy.nvim:
+
 ```lua
 -- minimal installation
 {
@@ -102,6 +103,8 @@ lazy.nvim:
         width = 50,
         height = 15,
         border = "rounded",
+        title = " To-dos ",
+        title_pos = "center",
       },
 
       -- if plugin should manage the winbar
@@ -146,6 +149,7 @@ require("lualine").setup {
 ```
 
 with heirline:
+
 ```lua
 {
   provider = function()

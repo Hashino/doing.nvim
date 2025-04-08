@@ -56,6 +56,9 @@ Config.default_opts = {
     border = "rounded",
 
     noautocmd = true,
+
+    title = " Doing Tasks ", -- leave empty to disable
+    title_pos = "center",
   },
 }
 
