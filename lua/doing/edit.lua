@@ -7,7 +7,7 @@ local Edit    = {
 }
 
 --- open floating window to edit tasks
-function Edit.open_edit()
+function Edit.open_edit(opts)
   if not Edit.buf then
     Edit.buf = vim.api.nvim_create_buf(false, true)
 
@@ -47,7 +47,10 @@ function Edit.open_edit()
   end
 
   vim.keymap.set("n", "q", close_edit, { buffer = Edit.buf, })
-  vim.keymap.set("n", "<Esc>", close_edit, { buffer = Edit.buf, })
+
+  if opts.close_on_esc then
+    vim.keymap.set("n", "<Esc>", close_edit, { buffer = Edit.buf, })
+  end
 end
 
 return Edit

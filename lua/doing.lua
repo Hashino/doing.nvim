@@ -54,7 +54,7 @@ end
 
 ---edit the tasks in a floating window
 function Doing.edit()
-  edit.open_edit()
+  edit.open_edit(config.options)
 end
 
 ---finish the current task
