@@ -77,11 +77,11 @@ function State.status(force)
 end
 
 ---show a message for the duration of `options.message_timeout` or timeout
----@param str string message to show
+---@param message string message to show
 ---@param timeout? number time in ms to show message
-function State.show_message(str, timeout)
+function State.show_message(message, timeout)
   if config.options.show_messages then
-    State.message = str
+    State.message = message
     State.task_modified()
 
     vim.defer_fn(function()
@@ -99,11 +99,11 @@ function State.task_modified()
   return config.options.store.sync_tasks and sync()
 end
 
-function State.add(str, to_front)
+function State.add(task, to_front)
   if to_front then
-    table.insert(State.tasks, 1, str)
+    table.insert(State.tasks, 1, task)
   else
-    table.insert(State.tasks, str)
+    table.insert(State.tasks, task)
   end
 end
 
