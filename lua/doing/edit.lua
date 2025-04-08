@@ -1,7 +1,6 @@
-local win_cfg = require("doing.config").options.edit_win_config
-local state   = require("doing.state")
+local state = require("doing.state")
 
-local Edit    = {
+local Edit  = {
   win = nil,
   buf = nil,
 }
@@ -30,7 +29,7 @@ function Edit.open_edit(opts)
   end
 
   if not Edit.win then
-    Edit.win = vim.api.nvim_open_win(Edit.buf, true, win_cfg)
+    Edit.win = vim.api.nvim_open_win(Edit.buf, true, opts.edit_win_config)
 
     vim.api.nvim_set_option_value("number", true, { win = Edit.win, })
     vim.api.nvim_set_option_value("swapfile", false, { buf = Edit.buf, })
