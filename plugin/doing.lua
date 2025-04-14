@@ -6,7 +6,6 @@ local do_cmds = {
   ["edit"] = doing.edit,
   ["done"] = doing.done,
   ["toggle"] = doing.toggle,
-  ["random"] = doing.random,
 
   ["status"] = function()
     utils.notify(doing.status(true))
