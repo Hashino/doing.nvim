@@ -36,16 +36,17 @@ local function sync()
       local ok, err, err_name = (vim.uv or vim.loop).fs_unlink(tasks_file)
 
       if not ok then
-        utils.notify(tostring(err_name) .. ":" .. tostring(err),
-          vim.log.levels.ERROR)
+        utils.notify(tostring(err_name) .. ":" .. tostring(err), vim.log.levels.ERROR)
       end
     end)()
   end
 
-  local ok, err = pcall(vim.fn.writefile, State.tasks, tasks_file)
+  if #State.tasks > 0 then
+    local ok, err = pcall(vim.fn.writefile, State.tasks, tasks_file)
 
-  if #State.tasks > 0 and not ok then
-    utils.notify("error writing to tasks file:\n" .. err, vim.log.levels.ERROR)
+    if not ok then
+      utils.notify("error writing to tasks file:\n" .. err, vim.log.levels.ERROR)
+    end
   end
 end
 
