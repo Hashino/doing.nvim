@@ -25,7 +25,7 @@ Config.default_opts = {
   show_remaining = true,
 
   -- if should show messages on the status string
-  -- if true, the status will show a message for the duration 
+  -- if true, the status will show a message for the duration
   -- of message_timeout in the status string
   show_messages = true,
   message_timeout = 2000,
@@ -36,7 +36,7 @@ Config.default_opts = {
 
   store = {
     file_name = ".tasks", -- name of tasks file
-    sync_tasks = false, -- keeps the file tasks always in sync with the tasks
+    sync_tasks = false,   -- keeps the tasks file always in sync with the tasks
   },
 
   -- if should close the floating window when pressing <Esc>

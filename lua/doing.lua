@@ -1,6 +1,5 @@
 local config = require("doing.config")
 local state  = require("doing.state")
-local edit   = require("doing.edit")
 
 local Doing  = {}
 
@@ -51,9 +50,57 @@ function Doing.add(task, to_front)
   end
 end
 
+local editor  = {
+  win = nil,
+  buf = nil,
+}
+
 ---edit the tasks in a floating window
 function Doing.edit()
-  edit.open_edit(config.options)
+  if not editor.buf then
+    editor.buf = vim.api.nvim_create_buf(false, true)
+
+    -- save tasks when window is closed
+    vim.api.nvim_create_autocmd("BufWinLeave", {
+      buffer = editor.buf,
+      callback = function()
+        local lines = vim.api.nvim_buf_get_lines(editor.buf, 0, -1, true)
+
+        -- removes empty lines
+        for i, line in ipairs(lines) do
+          if line == "" then
+            table.remove(lines, i)
+          end
+        end
+
+        state.tasks = lines
+        vim.defer_fn(state.task_modified, 0)
+      end,
+    })
+  end
+
+  if not editor.win then
+    editor.win = vim.api.nvim_open_win(editor.buf, true, config.options.edit_win_config)
+
+    vim.api.nvim_set_option_value("number", true, { win = editor.win, })
+    vim.api.nvim_set_option_value("swapfile", false, { buf = editor.buf, })
+    vim.api.nvim_set_option_value("filetype", "doing_tasks", { buf = editor.buf, })
+    vim.api.nvim_set_option_value("bufhidden", "delete", { buf = editor.buf, })
+  end
+
+  vim.api.nvim_buf_set_lines(editor.buf, 0, #state.tasks, false, state.tasks)
+
+  ---closes the window, sets the task and calls task_modified
+  local function close_edit()
+    vim.api.nvim_win_close(editor.win, true)
+    editor.win = nil
+  end
+
+  vim.keymap.set("n", "q", close_edit, { buffer = editor.buf, })
+
+  if config.options.close_on_esc then
+    vim.keymap.set("n", "<Esc>", close_edit, { buffer = editor.buf, })
+  end
 end
 
 ---finish the current task
