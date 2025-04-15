@@ -36,7 +36,7 @@ local function sync()
       end
     end)()
   elseif #State.tasks > 0 then
-    -- if tasks exist, write them to the file
+    -- if there are tasks, write them to the file
     local ok, err, err_name = pcall(vim.fn.writefile, State.tasks, tasks_file)
 
     if not ok then
