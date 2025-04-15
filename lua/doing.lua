@@ -97,10 +97,6 @@ function Doing.edit()
   end
 
   vim.keymap.set("n", "q", close_edit, { buffer = editor.buf, })
-
-  if config.options.close_on_esc then
-    vim.keymap.set("n", "<Esc>", close_edit, { buffer = editor.buf, })
-  end
 end
 
 ---finish the current task

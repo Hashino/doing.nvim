@@ -9,7 +9,6 @@ local Config = {}
 ---@field winbar.enabled boolean if plugin should manage the winbar
 ---@field store.file_name string name of the task file
 ---@field store.sync_tasks boolean keeps the file tasks always in sync with the loaded tasks
----@field close_on_esc boolean if should close the floating window when pressing <Esc>
 ---@field edit_win_config vim.api.keyset.win_config window configs of the floating editor
 
 ---@class DoingOptions
