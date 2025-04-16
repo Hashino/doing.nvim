@@ -1,5 +1,6 @@
 local config = require("doing.config")
 local state  = require("doing.state")
+local utils = require("doing.utils")
 
 local Doing  = {}
 
@@ -13,7 +14,7 @@ function Doing.setup(opts)
   if config.options.winbar.enabled then
     local function update_winbar()
       vim.defer_fn(function()
-        vim.api.nvim_set_option_value("winbar", state.status(), { scope = "local", })
+        vim.api.nvim_set_option_value("winbar", Doing.status(), { scope = "local", })
       end, 0)
     end
 
@@ -48,6 +49,45 @@ function Doing.add(task, to_front)
       end
     end)
   end
+end
+
+---finish the current task
+function Doing.done()
+  if #state.tasks > 0 then
+    state.done()
+
+    if #state.tasks == 0 then
+      Doing.show_message("All tasks done ")
+    elseif not config.options.show_remaining then
+      Doing.show_message(#state.tasks .. " tasks left.")
+    else
+      state.task_modified()
+    end
+  else
+    Doing.show_message("Not doing any task")
+  end
+end
+
+---@param force? boolean return status even if the plugin is toggled off
+---@return string current current plugin task or message
+function Doing.status(force)
+  if (state.view_enabled or force) and utils.should_display() then
+    if state.message then
+      return state.message
+    elseif #state.tasks > 0 then
+      local status = config.options.doing_prefix .. state.tasks[1]
+
+      -- append task count number if there is more than 1 task
+      if config.options.show_remaining and #state.tasks > 1 then
+        status = status .. "  +" .. (#state.tasks - 1) .. " more"
+      end
+
+      return status
+    elseif force then
+      return "Not doing any tasks"
+    end
+  end
+  return ""
 end
 
 local editor  = {
@@ -99,33 +139,27 @@ function Doing.edit()
   vim.keymap.set("n", "q", close_edit, { buffer = editor.buf, })
 end
 
----finish the current task
-function Doing.done()
-  if #state.tasks > 0 then
-    state.done()
-
-    if #state.tasks == 0 then
-      state.show_message("All tasks done ")
-    elseif not config.options.show_remaining then
-      state.show_message(#state.tasks .. " tasks left.")
-    else
-      state.task_modified()
-    end
-  else
-    state.show_message("Not doing any task")
-  end
-end
-
----@param force? boolean return status even if the plugin is toggled off
----@return string current current plugin task or message
-function Doing.status(force)
-  return state.status(force)
-end
-
 ---toggle the visibility of the plugin
 function Doing.toggle()
   state.view_enabled = not state.view_enabled
   state.task_modified()
+end
+
+---show a message for the duration of `options.message_timeout` or timeout
+---@param message string message to show
+---@param timeout? number time in ms to show message
+function Doing.show_message(message, timeout)
+  if config.options.show_messages then
+    state.message = message
+    state.task_modified()
+
+    vim.defer_fn(function()
+      state.message = nil
+      state.task_modified()
+    end, timeout or config.options.message_timeout)
+  else
+    state.task_modified()
+  end
 end
 
 ---@return integer number of tasks left

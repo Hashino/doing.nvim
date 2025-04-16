@@ -50,28 +50,6 @@ if not config.options.store.sync_tasks then
   vim.api.nvim_create_autocmd({ "VimLeave", "DirChangedPre", }, { callback = sync, })
 end
 
----@param force? boolean return status even if the plugin is toggled off
----@return string current current plugin task or message
-function State.status(force)
-  if (State.view_enabled or force) and utils.should_display() then
-    if State.message then
-      return State.message
-    elseif #State.tasks > 0 then
-      local status = config.options.doing_prefix .. State.tasks[1]
-
-      -- append task count number if there is more than 1 task
-      if config.options.show_remaining and #State.tasks > 1 then
-        status = status .. "  +" .. (#State.tasks - 1) .. " more"
-      end
-
-      return status
-    elseif force then
-      return "Not doing any tasks"
-    end
-  end
-  return ""
-end
-
 function State.add(task, to_front)
   if to_front then
     table.insert(State.tasks, 1, task)
@@ -82,23 +60,6 @@ end
 
 function State.done()
   table.remove(State.tasks, 1)
-end
-
----show a message for the duration of `options.message_timeout` or timeout
----@param message string message to show
----@param timeout? number time in ms to show message
-function State.show_message(message, timeout)
-  if config.options.show_messages then
-    State.message = message
-    State.task_modified()
-
-    vim.defer_fn(function()
-      State.message = nil
-      State.task_modified()
-    end, timeout or config.options.message_timeout)
-  else
-    State.task_modified()
-  end
 end
 
 ---gets called when a task is added, edited, or removed
