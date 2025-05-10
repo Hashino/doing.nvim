@@ -9,20 +9,6 @@ local State = {
 
 local tasks_file = ""
 
--- reloads tasks when directory changes and on startup
-vim.api.nvim_create_autocmd({ "DirChanged", "VimEnter", }, {
-  callback = function()
-    tasks_file = vim.fn.getcwd()
-       .. utils.os_path_separator()
-       .. config.options.store.file_name
-
-    local ok, res = pcall(vim.fn.readfile, tasks_file)
-    State.tasks = ok and res or {}
-
-    State.task_modified()
-  end,
-})
-
 ---syncs file tasks with loaded tasks
 local function sync()
   if vim.fn.findfile(tasks_file, ".;") ~= "" and #State.tasks == 0 then
@@ -46,9 +32,34 @@ local function sync()
   end
 end
 
+-- saves tasks before quitting or changing directory
 if not config.options.store.sync_tasks then
   vim.api.nvim_create_autocmd({ "VimLeave", "DirChangedPre", }, { callback = sync, })
 end
+
+---gets called when a task is added, edited, or removed
+function State.task_modified()
+  vim.api.nvim_exec_autocmds("User", { pattern = "TaskModified", })
+  return config.options.store.sync_tasks and sync()
+end
+
+local function load_tasks()
+  tasks_file = vim.fn.getcwd()
+     .. utils.os_path_separator()
+     .. config.options.store.file_name
+
+  local ok, res = pcall(vim.fn.readfile, tasks_file)
+  State.tasks = ok and res or {}
+
+  State.task_modified()
+end
+
+-- reloads tasks when directory changes
+vim.api.nvim_create_autocmd({ "DirChanged", }, {
+  callback = load_tasks,
+})
+
+load_tasks()
 
 function State.add(task, to_front)
   if to_front then
@@ -60,12 +71,6 @@ end
 
 function State.done()
   table.remove(State.tasks, 1)
-end
-
----gets called when a task is added, edited, or removed
-function State.task_modified()
-  vim.api.nvim_exec_autocmds("User", { pattern = "TaskModified", })
-  return config.options.store.sync_tasks and sync()
 end
 
 return State
