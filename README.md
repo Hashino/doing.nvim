@@ -7,8 +7,8 @@
 
 # doing.nvim
 
-<a href="https://dotfyle.com/plugins/Hashino/speed.nvim">
-	<img src="https://dotfyle.com/plugins/Hashino/speed.nvim/shield?style=flat" />
+<a href="https://dotfyle.com/plugins/Hashino/doing.nvim">
+	<img src="https://dotfyle.com/plugins/Hashino/doing.nvim/shield?style=flat" />
 </a>
 
 A minimal task manager for neovim. Works by keeping a stack of strings stored in
