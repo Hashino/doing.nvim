@@ -43,7 +43,7 @@ function Doing.add(task, to_front)
     state.task_modified()
   else
     vim.ui.input({ prompt = "Enter the new task: ", }, function(input)
-      if input then
+      if input ~= "" then
         state.add(input, to_front)
         state.task_modified()
       end
