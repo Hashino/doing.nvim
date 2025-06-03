@@ -110,6 +110,10 @@ lazy.nvim:
       store = {
         -- name of tasks file
         file_name = ".tasks",
+        -- if true, tasks file is always in sync with
+        -- tasklist, otherwise, tasks get saved to file on
+        -- closing neovim or changin cwd
+        sync_tasks = false,
       },
     }
     -- example on how to change the winbar highlight
