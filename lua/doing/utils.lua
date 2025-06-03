@@ -2,6 +2,8 @@ local config = require("doing.config")
 
 local Utils = {}
 
+Utils.augroup = vim.api.nvim_create_augroup("Doing", { clear = true, })
+
 ---checks whether the current window/buffer should display the plugin
 function Utils.should_display()
   -- once a window gets checked once, a variable is set to tell doing

@@ -19,10 +19,12 @@ function Doing.setup(opts)
     end
 
     vim.api.nvim_create_autocmd({ "BufEnter", }, {
+      augroup = utils.augroup,
       callback = update_winbar,
     })
 
     vim.api.nvim_create_autocmd({ "User", }, {
+      augroup = utils.augroup,
       pattern = "TaskModified",
       callback = update_winbar,
     })
@@ -102,6 +104,7 @@ function Doing.edit()
 
     -- save tasks when window is closed
     vim.api.nvim_create_autocmd("BufWinLeave", {
+      group = utils.augroup,
       buffer = editor.buf,
       callback = function()
         local lines = vim.api.nvim_buf_get_lines(editor.buf, 0, -1, true)

@@ -34,7 +34,10 @@ end
 
 -- saves tasks before quitting or changing directory
 if not config.options.store.sync_tasks then
-  vim.api.nvim_create_autocmd({ "VimLeave", "DirChangedPre", }, { callback = State.sync, })
+  vim.api.nvim_create_autocmd({ "VimLeave", "DirChangedPre", }, {
+    group = utils.augroup,
+    callback = State.sync,
+  })
 end
 
 ---gets called when a task is added, edited, or removed
@@ -56,6 +59,7 @@ end
 
 -- reloads tasks when directory changes
 vim.api.nvim_create_autocmd({ "DirChanged", }, {
+  group = utils.augroup,
   callback = load_tasks,
 })
 
