@@ -1,6 +1,6 @@
 local config = require("doing.config")
 local state  = require("doing.state")
-local utils = require("doing.utils")
+local utils  = require("doing.utils")
 
 local Doing  = {}
 
@@ -90,7 +90,7 @@ function Doing.status(force)
   return ""
 end
 
-local editor  = {
+local editor = {
   win = nil,
   buf = nil,
 }
@@ -131,12 +131,10 @@ function Doing.edit()
   vim.api.nvim_buf_set_lines(editor.buf, 0, #state.tasks, false, state.tasks)
 
   ---closes the window, sets the task and calls task_modified
-  local function close_edit()
+  vim.keymap.set("n", "q", function()
     vim.api.nvim_win_close(editor.win, true)
     editor.win = nil
-  end
-
-  vim.keymap.set("n", "q", close_edit, { buffer = editor.buf, })
+  end, { buffer = editor.buf, })
 end
 
 ---toggle the visibility of the plugin
@@ -165,6 +163,10 @@ end
 ---@return integer number of tasks left
 function Doing.tasks_left()
   return #state.tasks or 0
+end
+
+function Doing.sync()
+  state.sync()
 end
 
 return Doing

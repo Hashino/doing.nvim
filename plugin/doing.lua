@@ -7,6 +7,8 @@ local do_cmds = {
   ["done"] = doing.done,
   ["toggle"] = doing.toggle,
 
+  ["sync"] = doing.sync,
+
   ["status"] = function()
     utils.notify(doing.status(true))
   end,

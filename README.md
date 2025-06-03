@@ -50,6 +50,7 @@ this plugin was originally a fork of [nocksock/do.nvim](https://github.com/nocks
 - `:Do status` shows notification with current task/message
 - `:Do edit` edit the tasklist in a floating window
 - `:Do toggle` toggle the display (winbar and status)
+- `:Do sync` instantly saves tasks to file
 
 ## Installation
 

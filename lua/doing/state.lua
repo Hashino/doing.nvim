@@ -10,7 +10,7 @@ local State = {
 local tasks_file = ""
 
 ---syncs file tasks with loaded tasks
-local function sync()
+function State.sync()
   if vim.fn.findfile(tasks_file, ".;") ~= "" and #State.tasks == 0 then
     -- if file exists and there are no tasks, delete it
     vim.schedule_wrap(function()
@@ -34,13 +34,13 @@ end
 
 -- saves tasks before quitting or changing directory
 if not config.options.store.sync_tasks then
-  vim.api.nvim_create_autocmd({ "VimLeave", "DirChangedPre", }, { callback = sync, })
+  vim.api.nvim_create_autocmd({ "VimLeave", "DirChangedPre", }, { callback = State.sync, })
 end
 
 ---gets called when a task is added, edited, or removed
 function State.task_modified()
   vim.api.nvim_exec_autocmds("User", { pattern = "TaskModified", })
-  return config.options.store.sync_tasks and sync()
+  return config.options.store.sync_tasks and State.sync()
 end
 
 local function load_tasks()
