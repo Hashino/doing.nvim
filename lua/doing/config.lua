@@ -38,9 +38,6 @@ Config.default_opts = {
     sync_tasks = false,   -- keeps the tasks file always in sync with the tasks
   },
 
-  -- if should close the floating window when pressing <Esc>
-  close_on_esc = true,
-
   -- window configs of the floating tasks editor
   -- see :h nvim_open_win() for available options
   edit_win_config = {
