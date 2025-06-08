@@ -59,9 +59,10 @@ lazy.nvim:
 -- minimal installation
 {
   "Hashino/doing.nvim",
-  cmd = "Do",
+  lazy = false,
+  opts = {},
   keys = {
-    { "<leader>da", function() require("doing").add() end, {}, },
+    { "<leader>da", function() require("doing").add() end,  {}, },
     { "<leader>dn", function() require("doing").done() end, {}, },
     { "<leader>de", function() require("doing").edit() end, {}, },
   },
