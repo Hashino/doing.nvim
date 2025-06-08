@@ -19,12 +19,12 @@ function Doing.setup(opts)
     end
 
     vim.api.nvim_create_autocmd({ "BufEnter", }, {
-      augroup = utils.augroup,
+      group = utils.augroup,
       callback = update_winbar,
     })
 
     vim.api.nvim_create_autocmd({ "User", }, {
-      augroup = utils.augroup,
+      group = utils.augroup,
       pattern = "TaskModified",
       callback = update_winbar,
     })
