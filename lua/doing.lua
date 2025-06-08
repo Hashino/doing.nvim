@@ -7,7 +7,7 @@ local Doing  = {}
 --- setup doing.nvim
 ---@param opts? DoingOptions
 function Doing.setup(opts)
-  config.options = vim.tbl_deep_extend("force", config.default_opts, opts or {})
+  config.options = vim.tbl_deep_extend("force", config.options, opts or {})
 
   -- doesn't touch the winbar if disabled so other plugins can manage
   -- it without interference
@@ -73,7 +73,7 @@ end
 ---@param force? boolean return status even if the plugin is toggled off
 ---@return string current current plugin task or message
 function Doing.status(force)
-  if (state.view_enabled or force) and utils.should_display() then
+  if (state.view_enabled and utils.should_display()) or force then
     if state.message then
       return state.message
     elseif #state.tasks > 0 then

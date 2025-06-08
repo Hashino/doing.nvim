@@ -10,9 +10,7 @@ local Config = {}
 ---@field store.file_name string name of the task file
 ---@field store.sync_tasks boolean keeps the file tasks always in sync with the loaded tasks
 ---@field edit_win_config vim.api.keyset.win_config window configs of the floating editor
-
----@class DoingOptions
-Config.default_opts = {
+Config.options = {
   doing_prefix = "Doing: ",
 
   -- doesn"t display on buffers that match filetype/filename/filepath to
@@ -54,7 +52,5 @@ Config.default_opts = {
     noautocmd = true,
   },
 }
-
-Config.options = Config.default_opts
 
 return Config
