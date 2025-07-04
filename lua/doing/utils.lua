@@ -52,12 +52,7 @@ function Utils.should_display()
 end
 
 function Utils.os_path_separator()
-  local dir_separator = "/"
-  if (vim.loop or vim.uv).os_uname().sysname:find("Windows") then
-    dir_separator = "\\"
-  end
-
-  return dir_separator
+  return (vim.loop or vim.uv).os_uname().sysname:find("Windows") and "\\" or "/"
 end
 
 --- calls vim.notify with a styled title and icon
