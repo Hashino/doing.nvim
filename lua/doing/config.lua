@@ -15,8 +15,8 @@ Config.options = {
 
   -- doesn"t display on buffers that match filetype/filename/filepath to
   -- entries. can be either a string array or a function that returns a
-  -- string array. filepath can be relative to cwd or absolute
-  ignored_buffers = { "NvimTree", },
+  -- string array. filepath can be relative or absolute
+  ignored_buffers = { ".tasks", },
 
   -- if should append "+n more" to the status when there's tasks remaining
   show_remaining = true,

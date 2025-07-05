@@ -7,7 +7,7 @@ local State = {
   tasks = {},
 }
 
-local tasks_file = ""
+local tasks_file
 
 ---syncs file tasks with loaded tasks
 function State.sync()
@@ -57,13 +57,13 @@ local function load_tasks()
   State.task_modified()
 end
 
+load_tasks()
+
 -- reloads tasks when directory changes
 vim.api.nvim_create_autocmd({ "DirChanged", }, {
   group = utils.augroup,
   callback = load_tasks,
 })
-
-load_tasks()
 
 function State.add(task, to_front)
   if to_front then

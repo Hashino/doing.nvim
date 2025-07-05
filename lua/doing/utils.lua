@@ -27,13 +27,12 @@ function Utils.should_display()
         exclude = vim.fn.getcwd() .. exclude:sub(2, -1)
       end
 
-      local home = tostring(os.getenv("HOME"))
-      local curr = vim.fn.expand("%:p")
+      exclude = exclude:gsub("~", tostring(os.getenv("HOME"))) -- expand ~ to home directory
 
       if
          vim.bo.filetype:find(exclude)      -- match filetype
          or exclude == vim.fn.expand("%")   -- match filename
-         or exclude:gsub("~", home) == curr -- match filepath
+         or exclude == vim.fn.expand("%:p") -- match filepath
       then
         vim.b.doing_should_display = false
         return false
