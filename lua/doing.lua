@@ -9,6 +9,10 @@ local Doing  = {}
 function Doing.setup(opts)
   config.options = vim.tbl_deep_extend("force", config.options, opts or {})
 
+  if type(config.options.ignored_buffers) == "function" then
+    config.options.ignored_buffers = config.options.ignored_buffers()
+  end
+
   -- doesn't touch the winbar if disabled so other plugins can manage
   -- it without interference
   if config.options.winbar.enabled then

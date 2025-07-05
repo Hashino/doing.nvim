@@ -13,42 +13,36 @@ function Utils.should_display()
     return vim.b.doing_should_display
   end
 
-  if vim.bo.buftype == "popup"
-     or vim.bo.buftype == "prompt"
-     or vim.fn.win_gettype() ~= ""
-  then
-    -- saves result to a buffer variable
+  -- checks if current buffer is a normal buffer
+  if vim.bo.buftype == "popup" or vim.bo.buftype == "prompt" or vim.fn.win_gettype() ~= "" then
     vim.b.doing_should_display = false
     return false
-  end
+  else
+    local path_sep = Utils.os_path_separator()
 
-  local ignore = config.options.ignored_buffers
-  ignore = type(ignore) == "function" and ignore() or ignore
+    ---@diagnostic disable-next-line: param-type-mismatch
+    for _, exclude in ipairs(config.options.ignored_buffers) do
+      -- checks if exclude is a relative filepath and expands it
+      if exclude:sub(1, 2) == "." .. path_sep then
+        exclude = vim.fn.getcwd() .. exclude:sub(2, -1)
+      end
 
-  local home_path_abs = tostring(os.getenv("HOME"))
-  local curr = vim.fn.expand("%:p")
+      local home = tostring(os.getenv("HOME"))
+      local curr = vim.fn.expand("%:p")
 
-  ---@diagnostic disable-next-line: param-type-mismatch
-  for _, exclude in ipairs(ignore) do
-    -- checks if exclude is a relative filepath and expands it
-    if exclude:sub(1, 2) == "./" or exclude:sub(1, 2) == ".\\" then
-      exclude = vim.fn.getcwd() .. exclude:sub(2, -1)
+      if
+         vim.bo.filetype:find(exclude)      -- match filetype
+         or exclude == vim.fn.expand("%")   -- match filename
+         or exclude:gsub("~", home) == curr -- match filepath
+      then
+        vim.b.doing_should_display = false
+        return false
+      end
     end
 
-    if
-       vim.bo.filetype:find(exclude)               -- match filetype
-       or exclude == vim.fn.expand("%")            -- match filename
-       or exclude:gsub("~", home_path_abs) == curr -- match filepath
-    then
-      -- saves result to a buffer variable
-      vim.b.doing_should_display = false
-      return false
-    end
+    vim.b.doing_should_display = true
+    return true
   end
-
-  -- saves result to a buffer variable
-  vim.b.doing_should_display = true
-  return true
 end
 
 function Utils.os_path_separator()
