@@ -13,21 +13,17 @@ local tasks_file
 function State.sync()
   if vim.fn.findfile(tasks_file, ".;") ~= "" and #State.tasks == 0 then
     -- if file exists and there are no tasks, delete it
-    vim.schedule_wrap(function()
-      local ok, err, err_name = (vim.uv or vim.loop).fs_unlink(tasks_file)
-
-      if not ok then
-        utils.notify("error deleting tasks file: " .. tostring(err_name) .. "\n" .. err,
-          vim.log.levels.ERROR)
-      end
-    end)()
-  elseif #State.tasks > 0 then
-    -- if there are tasks, write them to the file
-    local ok, err, err_name = pcall(vim.fn.writefile, State.tasks, tasks_file)
+    local ok, err = (vim.uv or vim.loop).fs_unlink(tasks_file)
 
     if not ok then
-      utils.notify("error writing to tasks file:" .. tostring(err_name) .. "\n" .. err,
-        vim.log.levels.ERROR)
+      utils.notify("error deleting tasks file: " .. "\n" .. err, vim.log.levels.ERROR)
+    end
+  elseif #State.tasks > 0 then
+    -- if there are tasks, write them to the file
+    local ok, err = pcall(vim.fn.writefile, State.tasks, tasks_file)
+
+    if not ok then
+      utils.notify("error writing to tasks file:" .. "\n" .. err, vim.log.levels.ERROR)
     end
   end
 end
