@@ -17,9 +17,7 @@ function Doing.setup(opts)
   -- it without interference
   if config.options.winbar.enabled then
     local function update_winbar()
-      vim.defer_fn(function()
-        vim.api.nvim_set_option_value("winbar", Doing.status(), { scope = "local", })
-      end, 0)
+      vim.api.nvim_set_option_value("winbar", Doing.status(), { scope = "local", })
     end
 
     vim.api.nvim_create_autocmd({ "BufEnter", }, {
@@ -121,7 +119,7 @@ function Doing.edit()
         end
 
         state.tasks = lines
-        vim.defer_fn(state.task_modified, 0)
+        state.task_modified()
       end,
     })
   end
