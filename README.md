@@ -202,13 +202,11 @@ If your winbar is already in use and your status bar is full, you can use
       pattern = "TaskModified",
       desc = "This is called when a task is added, edited or completed",
       callback = function()
-        vim.defer_fn(function()
-          local status = doing.status()
-          if status ~= "" then
-            vim.notify(status, vim.log.levels.INFO,
-              { title = "Doing:", icon = "", })
-          end
-        end, 0)
+        local status = doing.status()
+        if status ~= "" then
+          vim.notify(status, vim.log.levels.INFO,
+            { title = "Doing:", icon = "", })
+        end
       end,
     })
   end,
