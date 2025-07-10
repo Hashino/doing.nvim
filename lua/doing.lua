@@ -44,12 +44,12 @@ function Doing.add(task, to_front)
     end
 
     state.add(task, to_front)
-    state.task_modified()
+    state.changed()
   else
     vim.ui.input({ prompt = "Enter the new task: ", }, function(input)
       if input and input ~= "" then
         state.add(input, to_front)
-        state.task_modified()
+        state.changed()
       end
     end)
   end
@@ -65,7 +65,7 @@ function Doing.done()
     elseif not config.options.show_remaining then
       Doing.show_message(#state.tasks .. " tasks left.")
     else
-      state.task_modified()
+      state.changed()
     end
   else
     Doing.show_message("Not doing any task")
@@ -94,58 +94,43 @@ function Doing.status(force)
   return ""
 end
 
+
 local editor = {
   win = nil,
-  buf = nil,
+  buf = vim.api.nvim_create_buf(false, true),
 }
+
+-- sets tasks when window is closed
+vim.api.nvim_create_autocmd("BufWinLeave", {
+  group = utils.augroup,
+  buffer = editor.buf,
+  callback = function()
+    state.tasks = vim.api.nvim_buf_get_lines(editor.buf, 0, -1, true)
+    state.changed()
+  end,
+})
 
 ---edit the tasks in a floating window
 function Doing.edit()
-  if not editor.buf then
-    editor.buf = vim.api.nvim_create_buf(false, true)
-
-    -- save tasks when window is closed
-    vim.api.nvim_create_autocmd("BufWinLeave", {
-      group = utils.augroup,
-      buffer = editor.buf,
-      callback = function()
-        local lines = vim.api.nvim_buf_get_lines(editor.buf, 0, -1, true)
-
-        -- removes empty lines
-        for i, line in ipairs(lines) do
-          if line == "" then
-            table.remove(lines, i)
-          end
-        end
-
-        state.tasks = lines
-        state.task_modified()
-      end,
-    })
-  end
-
   if not editor.win then
     editor.win = vim.api.nvim_open_win(editor.buf, true, config.options.edit_win_config)
 
     vim.api.nvim_set_option_value("number", true, { win = editor.win, })
     vim.api.nvim_set_option_value("swapfile", false, { buf = editor.buf, })
-    vim.api.nvim_set_option_value("filetype", "doing_tasks", { buf = editor.buf, })
     vim.api.nvim_set_option_value("bufhidden", "delete", { buf = editor.buf, })
+
+    vim.api.nvim_buf_set_lines(editor.buf, 0, #state.tasks, false, state.tasks)
+
+    vim.keymap.set("n", "q", function()
+      editor.win = vim.api.nvim_win_close(editor.win, true)
+    end, { buffer = editor.buf, })
   end
-
-  vim.api.nvim_buf_set_lines(editor.buf, 0, #state.tasks, false, state.tasks)
-
-  ---closes the window, sets the task and calls task_modified
-  vim.keymap.set("n", "q", function()
-    vim.api.nvim_win_close(editor.win, true)
-    editor.win = nil
-  end, { buffer = editor.buf, })
 end
 
 ---toggle the visibility of the plugin
 function Doing.toggle()
   state.view_enabled = not state.view_enabled
-  state.task_modified()
+  state.changed()
 end
 
 ---show a message for the duration of `options.message_timeout` or timeout
@@ -154,14 +139,14 @@ end
 function Doing.show_message(message, timeout)
   if config.options.show_messages then
     state.message = message
-    state.task_modified()
+    state.changed()
 
     vim.defer_fn(function()
       state.message = nil
-      state.task_modified()
+      state.changed()
     end, timeout or config.options.message_timeout)
   else
-    state.task_modified()
+    state.changed()
   end
 end
 
