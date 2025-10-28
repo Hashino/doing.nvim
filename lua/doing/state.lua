@@ -11,9 +11,7 @@ local State = {
 ---loads tasks from the file into the state
 local function load_tasks()
   -- determine the file path for tasks file relative to the current working directory
-  State.file = vim.fn.getcwd()
-     .. utils.os_path_separator()
-     .. config.options.store.file_name
+  State.file = vim.fn.getcwd() .. utils.os_path_separator() .. config.options.store.file_name
 
   -- if the file exists, read its contents to state.tasks
   if vim.fn.findfile(State.file, ".;") ~= "" then
@@ -37,7 +35,7 @@ vim.api.nvim_create_autocmd({ "DirChanged", }, {
 function State.sync()
   if vim.fn.findfile(State.file, ".;") ~= "" and #State.tasks == 0 then
     -- if file exists and there are no tasks, delete it
-    local ok, err = (vim.uv or vim.loop).fs_unlink(State.file)
+    local ok, err = vim.uv.fs_unlink(State.file)
 
     if not ok then
       utils.notify("error deleting tasks file:\n" .. err, vim.log.levels.ERROR)

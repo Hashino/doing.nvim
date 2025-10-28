@@ -30,8 +30,8 @@ function Utils.should_display()
       exclude = exclude:gsub("~", tostring(os.getenv("HOME"))) -- expand ~ to home directory
 
       if
-         vim.bo.filetype:find(exclude)      -- match filetype
-         or exclude == vim.fn.expand("%")   -- match filename
+         vim.bo.filetype:find(exclude)     -- match filetype
+         or exclude == vim.fn.expand("%")  -- match filename
          or exclude == vim.fn.expand("%:p") -- match filepath
       then
         vim.b.doing_should_display = false
@@ -45,15 +45,14 @@ function Utils.should_display()
 end
 
 function Utils.os_path_separator()
-  return (vim.loop or vim.uv).os_uname().sysname:find("Windows") and "\\" or "/"
+  return vim.uv.os_uname().sysname:find("Windows") and "\\" or "/"
 end
 
 --- calls vim.notify with a styled title and icon
 ---@param msg string the message to show
 ---@param log_level? integer One of the values from |vim.log.levels|.
 function Utils.notify(msg, log_level)
-  vim.notify(msg, log_level or vim.log.levels.OFF,
-    { title = "doing.nvim", icon = "", })
+  vim.notify(msg, log_level or vim.log.levels.OFF, { title = "doing.nvim", icon = "", })
 end
 
 return Utils
