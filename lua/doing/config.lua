@@ -1,15 +1,14 @@
 local Config = {}
 
 ---@class DoingOptions config for [Hashino/doing.nvim]
----@field doing_prefix string prefix to show before the task
----@field ignored_buffers string[]|fun():string[] elements are checked against buffer filetype/filename/filepath
----@field show_remaining boolean show "+n more" when there are more than 1 tasks
----@field show_messages boolean show messages in status string
----@field message_timeout integer how many millisecons messages will stay on status
----@field winbar.enabled boolean if plugin should manage the winbar
----@field store.file_name string name of the task file
----@field store.sync_tasks boolean keeps the file tasks always in sync with the loaded tasks
----@field edit_win_config vim.api.keyset.win_config window configs of the floating editor
+---@field doing_prefix? string prefix to show before the task
+---@field ignored_buffers? string[]|fun():string[] elements are checked against buffer filetype/filename/filepath
+---@field show_remaining? boolean show "+n more" when there are more than 1 tasks
+---@field show_messages? boolean show messages in status string
+---@field message_timeout? integer how many millisecons messages will stay on status
+---@field winbar? DoingWinbarOptions options for winbar management
+---@field store? DoingStoreOptions options for task storage
+---@field edit_win_config? vim.api.keyset.win_config window configs of the floating editor
 Config.options = {
   doing_prefix = "Doing: ",
 
@@ -27,10 +26,15 @@ Config.options = {
   show_messages = true,
   message_timeout = 2000,
 
+  ---@class DoingWinbarOptions options for winbar management
+  ---@field enabled? boolean if plugin should manage the winbar
   winbar = {
     enabled = true, -- if plugin should manage the winbar
   },
 
+  ---@class DoingStoreOptions options for task storage
+  ---@field file_name? string name of tasks file
+  ---@field sync_tasks? boolean keeps the tasks file always in sync with the tasks
   store = {
     file_name = ".tasks", -- name of tasks file
     sync_tasks = false,   -- keeps the tasks file always in sync with the tasks
