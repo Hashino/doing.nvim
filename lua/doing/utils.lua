@@ -21,7 +21,7 @@ function Utils.should_display()
     local path_sep = Utils.os_path_separator()
 
     ---@diagnostic disable-next-line: param-type-mismatch
-    for _, exclude in ipairs(config.options.ignored_buffers) do
+    for _, exclude in ipairs(config.ignored_buffers) do
       -- checks if exclude is a relative filepath and expands it
       if exclude:sub(1, 2) == "." .. path_sep then
         exclude = vim.fn.getcwd() .. exclude:sub(2, -1)

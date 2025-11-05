@@ -5,17 +5,17 @@ local utils  = require("doing.utils")
 local Doing  = {}
 
 --- setup doing.nvim
----@param opts? DoingOptions
+---@param opts? doing.Config
 function Doing.setup(opts)
-  config.options = vim.tbl_deep_extend("force", config.options, opts or {})
+  config = vim.tbl_deep_extend("force", config, opts or {})
 
-  if type(config.options.ignored_buffers) == "function" then
-    config.options.ignored_buffers = config.options.ignored_buffers()
+  if type(config.ignored_buffers) == "function" then
+    config.ignored_buffers = config.ignored_buffers()
   end
 
   -- doesn't touch the winbar if disabled so other plugins can manage
   -- it without interference
-  if config.options.winbar.enabled then
+  if config.winbar.enabled then
     local function update_winbar()
       vim.api.nvim_set_option_value("winbar", Doing.status(), { scope = "local", })
     end
@@ -62,7 +62,7 @@ function Doing.done()
 
     if #state.tasks == 0 then
       Doing.show_message("All tasks done ")
-    elseif not config.options.show_remaining then
+    elseif not config.show_remaining then
       Doing.show_message(#state.tasks .. " tasks left.")
     else
       state.changed()
@@ -79,10 +79,10 @@ function Doing.status(force)
     if state.message then
       return state.message
     elseif #state.tasks > 0 then
-      local status = config.options.doing_prefix .. state.tasks[1]
+      local status = config.doing_prefix .. state.tasks[1]
 
       -- append task count number if there is more than 1 task
-      if config.options.show_remaining and #state.tasks > 1 then
+      if config.show_remaining and #state.tasks > 1 then
         status = status .. "  +" .. (#state.tasks - 1) .. " more"
       end
 
@@ -93,7 +93,6 @@ function Doing.status(force)
   end
   return ""
 end
-
 
 local editor = {
   win = nil,
@@ -113,7 +112,7 @@ vim.api.nvim_create_autocmd("BufWinLeave", {
 ---edit the tasks in a floating window
 function Doing.edit()
   if not editor.win then
-    editor.win = vim.api.nvim_open_win(editor.buf, true, config.options.edit_win_config)
+    editor.win = vim.api.nvim_open_win(editor.buf, true, config.edit_win_config)
 
     vim.api.nvim_set_option_value("number", true, { win = editor.win, })
     vim.api.nvim_set_option_value("swapfile", false, { buf = editor.buf, })
@@ -137,14 +136,14 @@ end
 ---@param message string message to show
 ---@param timeout? number time in ms to show message
 function Doing.show_message(message, timeout)
-  if config.options.show_messages then
+  if config.show_messages then
     state.message = message
     state.changed()
 
     vim.defer_fn(function()
       state.message = nil
       state.changed()
-    end, timeout or config.options.message_timeout)
+    end, timeout or config.message_timeout or 100)
   else
     state.changed()
   end
