@@ -1,3 +1,5 @@
+local Config = {}
+
 ---@class doing.Config [Hashino/doing.nvim] config
 ---@field doing_prefix? string prefix to show before the task
 ---@field ignored_buffers? string[]|fun():string[] elements are checked against buffer filetype/filename/filepath
@@ -7,7 +9,7 @@
 ---@field winbar? doing.Config.Winbar options for winbar management
 ---@field store? doing.Config.Store options for task storage
 ---@field edit_win_config? vim.api.keyset.win_config window configs of the floating editor
-local Config = {
+Config.options = {
   doing_prefix = "Doing: ",
 
   -- doesn"t display on buffers that match filetype/filename/filepath to

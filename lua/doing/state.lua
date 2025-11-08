@@ -11,7 +11,7 @@ local State = {
 ---loads tasks from the file into the state
 local function load_tasks()
   -- determine the file path for tasks file relative to the current working directory
-  State.file = vim.fn.getcwd() .. utils.os_path_separator() .. config.store.file_name
+  State.file = vim.fn.getcwd() .. utils.os_path_separator() .. config.options.store.file_name
 
   -- if the file exists, read its contents to state.tasks
   if vim.fn.findfile(State.file, ".;") ~= "" then
@@ -51,7 +51,7 @@ function State.sync()
 end
 
 -- saves tasks before quitting or changing directory
-if not config.store.sync_tasks then
+if not config.options.store.sync_tasks then
   vim.api.nvim_create_autocmd({ "VimLeave", "DirChangedPre", }, {
     group = utils.augroup,
     callback = State.sync,
@@ -61,7 +61,7 @@ end
 ---gets called when a task is added, edited, or removed
 function State.changed()
   vim.api.nvim_exec_autocmds("User", { pattern = "TaskModified", })
-  return config.store.sync_tasks and State.sync()
+  return config.options.store.sync_tasks and State.sync()
 end
 
 function State.add(task, to_front)
