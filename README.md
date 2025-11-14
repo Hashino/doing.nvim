@@ -69,6 +69,16 @@ lazy.nvim:
 }
 ```
 
+vim.pack:
+```lua
+vim.pack.add({ "https://github.com/Hashino/doing.nvim", })
+require("doing").setup()
+
+vim.keymap.set("n", "<leader>da", doing.add, { desc = "[D]oing: [A]dd", })
+vim.keymap.set("n", "<leader>dn", doing.done, { desc = "[D]oing: Do[n]e", })
+vim.keymap.set("n", "<leader>de", doing.edit, { desc = "[D]oing: [E]dit", })
+```
+
 ## Configuration
 
 ### Default Options
