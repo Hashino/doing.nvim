@@ -11,13 +11,11 @@
 	<img src="https://dotfyle.com/plugins/Hashino/doing.nvim/shield?style=flat" />
 </a>
 
-A minimal task manager for neovim. Works by keeping a stack of strings stored in
-plain text file and offering some ways of displaying those tasks.
+A minimal task manager for neovim. Works by keeping a stack of strings stored in plain text file and offering some ways of displaying those tasks.
 
-This plugin is meant to be very small, simple to use and performant. If you want
-a more featureful task manager, check out [todotxt.nvim](https://github.com/arnarg/todotxt.nvim) and [dooing](https://github.com/atiladefreitas/dooing).
+This plugin is meant to be very small, simple to use and performant. If you want a more featureful task manager, check out [todotxt.nvim](https://github.com/arnarg/todotxt.nvim) and [dooing](https://github.com/atiladefreitas/dooing).
 
-this plugin was originally a fork of [nocksock/do.nvim](https://github.com/nocksock/do.nvim)
+This plugin was originally a fork of [nocksock/do.nvim](https://github.com/nocksock/do.nvim)
 
 ![doing](https://raw.githubusercontent.com/Hashino/doing.nvim/main/demo.gif)
 *the gif was recorded using a [custom heirline component](https://github.com/Hashino/hash.nvim/blob/16d5a2af48b793808ee6d7daac0b8d6698faaa14/lua/hash/plugins/interface/status-bar.lua#L176-L221)*
@@ -88,70 +86,70 @@ vim.keymap.set("n", "<leader>de", doing.edit, { desc = "[D]oing: [E]dit", })
 ### Example Config
 
 ```lua
-{
-  "Hashino/doing.nvim",
-  config = function()
-    -- default options
-    require("doing").setup {
-      message_timeout = 2000,
-      doing_prefix = "Doing: ",
+require("doing").setup {
+  message_timeout = 2000,
+  doing_prefix = "Doing: ",
 
-      -- doesn't display on buffers that match filetype/filename/filepath to
-      -- entries. can be either a string array or a function that returns a
-      -- string array. filepath can be relative to cwd or absolute
-      ignored_buffers = { "NvimTree" },
+  -- doesn't display on buffers that match filetype/filename/filepath to
+  -- entries. can be either a string array or a function that returns a
+  -- string array. filepath can be relative to cwd or absolute
+  ignored_buffers = { "NvimTree" },
 
-      -- if should append "+n more" to the status when there's tasks remaining
-      show_remaining = true,
+  -- if should append "+n more" to the status when there's tasks remaining
+  show_remaining = true,
 
-      -- if should show messages on the status string
-      show_messages = true,
+  -- if should show messages on the status string
+  show_messages = true,
 
-      -- window configs of the floating tasks editor
-      -- see :h nvim_open_win() for available options
-      edit_win_config = {
-        width = 50,
-        height = 15,
-        border = "rounded",
-      },
+  -- window configs of the floating tasks editor
+  -- see :h nvim_open_win() for available options
+  edit_win_config = {
+    width = 50,
+    height = 15,
+    border = "rounded",
+  },
 
-      -- if plugin should manage the winbar
-      winbar = { enabled = true, },
+  -- if plugin should manage the winbar
+  winbar = { enabled = true, },
 
-      store = {
-        -- name of tasks file
-        file_name = ".tasks",
-        -- if true, tasks file is always in sync with
-        -- tasklist, otherwise, tasks get saved to file on
-        -- closing neovim or changin cwd
-        sync_tasks = false,
-      },
-    }
-    -- example on how to change the winbar highlight
-    vim.api.nvim_set_hl(0, "WinBar", { link = "Search" })
-
-    local doing = require("doing")
-
-    vim.keymap.set("n", "<leader>da", doing.add, { desc = "[D]oing: [A]dd" })
-    vim.keymap.set("n", "<leader>de", doing.edit, { desc = "[D]oing: [E]dit" })
-    vim.keymap.set("n", "<leader>dn", doing.done, { desc = "[D]oing: Do[n]e" })
-    vim.keymap.set("n", "<leader>dt", doing.toggle, { desc = "[D]oing: [T]oggle" })
-
-    vim.keymap.set("n", "<leader>ds", function()
-      vim.notify(doing.status(true), vim.log.levels.INFO,
-        { title = "Doing:", icon = "", })
-    end, { desc = "[D]oing: [S]tatus", })
-  end,
+  store = {
+    -- name of tasks file
+    file_name = ".tasks",
+    -- if true, tasks file is always in sync with
+    -- tasklist, otherwise, tasks get saved to file on
+    -- closing neovim or changing cwd
+    sync_tasks = false,
+  },
 }
+
+-- example on how to change the winbar highlight
+vim.api.nvim_set_hl(0, "WinBar", { link = "Search" })
+
+local doing = require("doing")
+
+vim.keymap.set("n", "<leader>da", doing.add, { desc = "[D]oing: [A]dd" })
+vim.keymap.set("n", "<leader>de", doing.edit, { desc = "[D]oing: [E]dit" })
+vim.keymap.set("n", "<leader>dn", doing.done, { desc = "[D]oing: Do[n]e" })
+vim.keymap.set("n", "<leader>dt", doing.toggle, { desc = "[D]oing: [T]oggle" })
+
+vim.keymap.set("n", "<leader>ds", function()
+  vim.notify(doing.status(true), vim.log.levels.INFO,
+    { title = "Doing:", icon = "", })
+end, { desc = "[D]oing: [S]tatus", })
 ```
 
 ### Integration
 
-In case you'd rather display the tasks with another plugin instead of the
-default winbar implementation, you can use the exposed views to do so.
+In case you'd rather display the tasks with another plugin instead of the default winbar implementation, you can use the exposed views to do so.
 
-For example with lualine:
+Firstly, we disable the winbar:
+```lua
+require("doing").setup({
+  winbar = { enabled = false, },
+})
+```
 
+Then, configure `lualine` like so:
 ```lua
 require("lualine").setup {
   winbar = {
@@ -160,7 +158,7 @@ require("lualine").setup {
 }
 ```
 
-with heirline:
+or, with `heirline`:
 ```lua
 {
   provider = function()
@@ -173,9 +171,7 @@ with heirline:
 
 ### Events
 
-This plugin exposes a custom event, for when a task is added, edited or
-completed. You can use it like so:
-
+This plugin exposes a custom event, for when a task is added, edited or completed. You can use it like so:
 ```lua
 vim.api.nvim_create_autocmd({ "User" }, {
    pattern = "TaskModified",
@@ -188,37 +184,26 @@ vim.api.nvim_create_autocmd({ "User" }, {
 
 ### Recipes
 
-If your winbar is already in use and your status bar is full, you can use
-`doing` with just notifications:
-
+You can use `doing` with just notifications:
 ```lua
-{
-  "Hashino/doing.nvim",
-  lazy = true,
-  init = function()
-    local doing = require("doing")
+local doing = require("doing")
 
-    -- example keymaps
-    vim.keymap.set("n", "<leader>da", doing.add, { desc = "[D]oing: [A]dd", })
-    vim.keymap.set("n", "<leader>de", doing.edit, { desc = "[D]oing: [E]dit", })
-    vim.keymap.set("n", "<leader>dn", doing.done, { desc = "[D]oing: Do[n]e", })
+-- example keymaps
+vim.keymap.set("n", "<leader>da", doing.add, { desc = "[D]oing: [A]dd", })
+vim.keymap.set("n", "<leader>de", doing.edit, { desc = "[D]oing: [E]dit", })
+vim.keymap.set("n", "<leader>dn", doing.done, { desc = "[D]oing: Do[n]e", })
 
-    vim.keymap.set("n", "<leader>ds", function()
-      vim.notify(doing.status(true), vim.log.levels.INFO,
-        { title = "Doing:", icon = "", })
-    end, { desc = "[D]oing: [S]tatus", })
+vim.keymap.set("n", "<leader>ds", function()
+  vim.notify(doing.status(true), vim.log.levels.INFO, { title = "Doing:", icon = "", })
+end, { desc = "[D]oing: [S]tatus", })
 
-    vim.api.nvim_create_autocmd({ "User", }, {
-      pattern = "TaskModified",
-      desc = "This is called when a task is added, edited or completed",
-      callback = function()
-        local status = doing.status()
-        if status ~= "" then
-          vim.notify(status, vim.log.levels.INFO,
-            { title = "Doing:", icon = "", })
-        end
-      end,
-    })
+vim.api.nvim_create_autocmd({ "User", }, {
+  pattern = "TaskModified",
+  callback = function()
+    local status = doing.status()
+    if status ~= "" then
+      vim.notify(status, vim.log.levels.INFO, { title = "Doing:", icon = "", })
+    end
   end,
-}
+})
 ```
