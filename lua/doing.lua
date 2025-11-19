@@ -32,6 +32,23 @@ function Doing.setup(opts)
     })
   end
 
+  Doing.editor = {
+    win = nil,
+    buf = vim.api.nvim_create_buf(false, true),
+  }
+
+  -- sets tasks when window is closed
+  vim.api.nvim_create_autocmd("BufWinLeave", {
+    group = utils.augroup,
+    buffer = Doing.editor.buf,
+    callback = function()
+      local lines = vim.api.nvim_buf_get_lines(Doing.editor.buf, 0, -1, true)
+
+      state.tasks = utils.remove_empty_lines(lines)
+      state.changed()
+    end,
+  })
+
   -- saves tasks before quitting or changing directory
   if not config.options.store.sync_tasks then
     vim.api.nvim_create_autocmd({ "VimLeave", "DirChangedPre", }, {
@@ -108,44 +125,20 @@ function Doing.status(force)
   return ""
 end
 
-local editor = {
-  win = nil,
-  buf = vim.api.nvim_create_buf(false, true),
-}
-
--- sets tasks when window is closed
-vim.api.nvim_create_autocmd("BufWinLeave", {
-  group = utils.augroup,
-  buffer = editor.buf,
-  callback = function()
-    local tasks = {}
-
-    for _, line in ipairs(vim.api.nvim_buf_get_lines(editor.buf, 0, -1, true)) do
-      -- skip empty lines
-      if line ~= "" then
-        table.insert(tasks, line)
-      end
-    end
-
-    state.tasks = tasks
-    state.changed()
-  end,
-})
-
 ---edit the tasks in a floating window
 function Doing.edit()
-  if not editor.win then
-    editor.win = vim.api.nvim_open_win(editor.buf, true, config.options.edit_win_config)
+  if not Doing.editor.win then
+    Doing.editor.win = vim.api.nvim_open_win(Doing.editor.buf, true, config.options.edit_win_config)
 
-    vim.api.nvim_set_option_value("number", true, { win = editor.win, })
-    vim.api.nvim_set_option_value("swapfile", false, { buf = editor.buf, })
-    vim.api.nvim_set_option_value("bufhidden", "delete", { buf = editor.buf, })
+    vim.api.nvim_set_option_value("number", true, { win = Doing.editor.win, })
+    vim.api.nvim_set_option_value("swapfile", false, { buf = Doing.editor.buf, })
+    vim.api.nvim_set_option_value("bufhidden", "delete", { buf = Doing.editor.buf, })
 
-    vim.api.nvim_buf_set_lines(editor.buf, 0, #state.tasks, false, state.tasks)
+    vim.api.nvim_buf_set_lines(Doing.editor.buf, 0, #state.tasks, false, state.tasks)
 
     vim.keymap.set("n", "q", function()
-      editor.win = vim.api.nvim_win_close(editor.win, true)
-    end, { buffer = editor.buf, })
+      Doing.editor.win = vim.api.nvim_win_close(Doing.editor.win, true)
+    end, { buffer = Doing.editor.buf, })
   end
 end
 

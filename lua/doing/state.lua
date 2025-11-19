@@ -20,12 +20,7 @@ function State.load_tasks()
       utils.notify("error reading tasks file:\n" .. res, vim.log.levels.ERROR)
     else
       -- prevents loading empty tasks
-      for _, task in ipairs(res) do
-        if task ~= "" then
-          table.insert(State.tasks, task)
-        end
-      end
-
+      State.tasks = utils.remove_empty_lines(res)
       State.changed()
     end
   end

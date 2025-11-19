@@ -30,8 +30,8 @@ function Utils.should_display()
       exclude = exclude:gsub("~", tostring(os.getenv("HOME"))) -- expand ~ to home directory
 
       if
-         vim.bo.filetype:find(exclude)     -- match filetype
-         or exclude == vim.fn.expand("%")  -- match filename
+         vim.bo.filetype:find(exclude)      -- match filetype
+         or exclude == vim.fn.expand("%")   -- match filename
          or exclude == vim.fn.expand("%:p") -- match filepath
       then
         vim.b.doing_should_display = false
@@ -46,6 +46,18 @@ end
 
 function Utils.os_path_separator()
   return vim.uv.os_uname().sysname:find("Windows") and "\\" or "/"
+end
+
+function Utils.remove_empty_lines(lines)
+  local cleaned = {}
+
+  for _, line in ipairs(lines) do
+    if line ~= "" then
+      table.insert(cleaned, line)
+    end
+  end
+
+  return cleaned
 end
 
 --- calls vim.notify with a styled title and icon
