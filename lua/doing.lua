@@ -47,7 +47,7 @@ function Doing.add(task, to_front)
     state.changed()
   else
     vim.ui.input({ prompt = "Enter the new task: ", }, function(input)
-      if input and input ~= "" then
+      if input then
         state.add(input, to_front)
         state.changed()
       end
@@ -104,15 +104,16 @@ vim.api.nvim_create_autocmd("BufWinLeave", {
   group = utils.augroup,
   buffer = editor.buf,
   callback = function()
-    state.tasks = {}
+    local tasks = {}
 
     for _, line in ipairs(vim.api.nvim_buf_get_lines(editor.buf, 0, -1, true)) do
       -- skip empty lines
       if line ~= "" then
-        table.insert(state.tasks, line)
+        table.insert(tasks, line)
       end
     end
 
+    state.tasks = tasks
     state.changed()
   end,
 })

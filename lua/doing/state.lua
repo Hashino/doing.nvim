@@ -19,7 +19,13 @@ local function load_tasks()
     if not ok then
       utils.notify("error reading tasks file:\n" .. res, vim.log.levels.ERROR)
     else
-      State.tasks = res
+      -- prevents loading empty tasks
+      for _, task in ipairs(res) do
+        if task ~= "" then
+          table.insert(State.tasks, task)
+        end
+      end
+
       State.changed()
     end
   end
@@ -30,6 +36,10 @@ vim.api.nvim_create_autocmd({ "DirChanged", }, {
   group = utils.augroup,
   callback = load_tasks,
 })
+
+function State.debug()
+  vim.notify(vim.inspect(State.tasks))
+end
 
 ---syncs file tasks with loaded tasks
 function State.sync()
@@ -65,10 +75,13 @@ function State.changed()
 end
 
 function State.add(task, to_front)
-  if to_front then
-    table.insert(State.tasks, 1, task)
-  else
-    table.insert(State.tasks, task)
+  -- prevents empty tasks from being added
+  if task ~= "" then
+    if to_front then
+      table.insert(State.tasks, 1, task)
+    else
+      table.insert(State.tasks, task)
+    end
   end
 end
 
