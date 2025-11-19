@@ -31,6 +31,22 @@ function Doing.setup(opts)
       callback = update_winbar,
     })
   end
+
+  -- saves tasks before quitting or changing directory
+  if not config.options.store.sync_tasks then
+    vim.api.nvim_create_autocmd({ "VimLeave", "DirChangedPre", }, {
+      group = utils.augroup,
+      callback = state.sync,
+    })
+  end
+
+  -- reloads tasks when directory changes
+  vim.api.nvim_create_autocmd({ "DirChanged", }, {
+    group = utils.augroup,
+    callback = state.load_tasks,
+  })
+
+  state.load_tasks()
 end
 
 --- add a task to the list
@@ -44,12 +60,10 @@ function Doing.add(task, to_front)
     end
 
     state.add(task, to_front)
-    state.changed()
   else
     vim.ui.input({ prompt = "Enter the new task: ", }, function(input)
       if input then
         state.add(input, to_front)
-        state.changed()
       end
     end)
   end
