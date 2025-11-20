@@ -2,7 +2,6 @@ local config = require("doing.config")
 local utils = require("doing.utils")
 
 local State = {
-  file = nil,
   tasks = {},
   message = nil,
   view_enabled = true,
@@ -10,38 +9,25 @@ local State = {
 
 ---loads tasks from the file into the state
 function State.load_tasks()
-  -- determine the file path for tasks file relative to the current working directory
-  State.file = vim.fn.getcwd() .. utils.os_path_separator() .. config.options.store.file_name
+  local found, lines = pcall(vim.fn.readfile, config.options.store.file_name)
 
-  -- if the file exists, read its contents to state.tasks
-  if vim.fn.findfile(State.file, ".;") ~= "" then
-    local ok, res = pcall(vim.fn.readfile, State.file)
-    if not ok then
-      utils.notify("error reading tasks file:\n" .. res, vim.log.levels.ERROR)
-    else
-      -- prevents loading empty tasks
-      State.tasks = utils.remove_empty_lines(res)
-      State.changed()
-    end
+  if found then
+    State.tasks = utils.remove_empty_lines(lines)
+  else
+    State.tasks = {}
   end
+
+  State.changed()
 end
 
----syncs file tasks with loaded tasks
+---syncs tasks file with loaded state
 function State.sync()
-  if vim.fn.findfile(State.file, ".;") ~= "" and #State.tasks == 0 then
-    -- if file exists and there are no tasks, delete it
-    local ok, err = vim.uv.fs_unlink(State.file)
-
-    if not ok then
-      utils.notify("error deleting tasks file:\n" .. err, vim.log.levels.ERROR)
-    end
-  elseif #State.tasks > 0 then
+  if #State.tasks > 0 then
     -- if there are tasks, write them to the file
-    local ok, err = pcall(vim.fn.writefile, State.tasks, State.file)
-
-    if not ok then
-      utils.notify("error writing to tasks file:\n" .. err, vim.log.levels.ERROR)
-    end
+    vim.fn.writefile(State.tasks, config.options.store.file_name)
+  elseif vim.fn.findfile(config.options.store.file_name, ".;") ~= "" then
+    -- if file exists and there are no tasks, delete it
+    vim.fn.delete(config.options.store.file_name)
   end
 end
 
