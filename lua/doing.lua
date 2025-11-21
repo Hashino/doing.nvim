@@ -138,6 +138,7 @@ function Doing.edit()
 
     vim.keymap.set("n", "q", function()
       Doing.editor.win = vim.api.nvim_win_close(Doing.editor.win, true)
+      Doing.editor.win = nil
     end, { buffer = Doing.editor.buf, })
   end
 end
