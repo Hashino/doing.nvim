@@ -42,6 +42,8 @@ function Doing.setup(opts)
     group = utils.augroup,
     buffer = Doing.editor.buf,
     callback = function()
+      Doing.editor.win = nil
+
       local lines = vim.api.nvim_buf_get_lines(Doing.editor.buf, 0, -1, true)
 
       state.tasks = utils.remove_empty_lines(lines)
@@ -133,11 +135,12 @@ function Doing.edit()
     vim.api.nvim_set_option_value("number", true, { win = Doing.editor.win, })
     vim.api.nvim_set_option_value("swapfile", false, { buf = Doing.editor.buf, })
     vim.api.nvim_set_option_value("bufhidden", "delete", { buf = Doing.editor.buf, })
+    vim.api.nvim_set_option_value("buftype", "nofile", { buf = Doing.editor.buf, })
 
     vim.api.nvim_buf_set_lines(Doing.editor.buf, 0, #state.tasks, false, state.tasks)
 
     vim.keymap.set("n", "q", function()
-      Doing.editor.win = vim.api.nvim_win_close(Doing.editor.win, true)
+      vim.api.nvim_win_close(Doing.editor.win, true)
     end, { buffer = Doing.editor.buf, })
   end
 end
