@@ -1,4 +1,4 @@
-local utils = require("doing.utils")
+local config = require("doing.config")
 local doing = require("doing")
 
 local do_cmds = {
@@ -10,7 +10,8 @@ local do_cmds = {
   ["sync"] = doing.sync,
 
   ["status"] = function()
-    utils.notify(doing.status(true))
+    vim.notify(doing.status(true), vim.log.levels.INFO,
+      { title = config.options.doing_prefix, icon = "", })
   end,
 }
 
